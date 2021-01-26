@@ -1,0 +1,23 @@
+{
+  "name": "macmon",
+  "version": "0.0.0",
+  "description": "Simple, no deps, \"run on dir change\" tool for Mac",
+  "bin": {
+    "macmon": "./index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mafintosh/macmon.git"
+  },
+  "keywords": [
+    "monitor",
+    "rerun",
+    "recursive"
+  ],
+  "author": "Mathias Buus (@mafintosh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mafintosh/macmon/issues"
+  },
+  "homepage": "https://github.com/mafintosh/macmon#readme"
+}
