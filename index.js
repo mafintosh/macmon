@@ -8,28 +8,43 @@ let changed = 0
 let proc = null
 let runs = 0
 let dir = process.cwd()
+let watch = null
+let start = 2
 
-if (!process.argv[2]) {
+for (start; start < process.argv.length; start++) {
+  const a = process.argv[start]
+  if (a[0] !== '-') break
+  if (a.startsWith('--watch=')) {
+    watch = a.split('--watch=')[1]
+  }
+  if (a.startsWith('-w=')) {
+    watch = a.split('-w=')[1]
+  }
+}
+
+if (!process.argv[start]) {
   console.error('Usage: macmon <command> ...args')
   process.exit(1)
 }
 
-for (const arg of process.argv.slice(2)) {
-  if (!fs.existsSync(arg)) continue
+if (!watch) {
+  for (const arg of process.argv.slice(start)) {
+    if (!fs.existsSync(arg)) continue
 
-  // check if we should watch a parent dir instead by checking if ../ or ../../ is an ancestor
-  // to the file arg
-  const filename = path.resolve(fs.realpathSync(arg))
-  const changeTo = check(dir, filename, '.') || check(dir, filename, '..') || check(dir, filename, '../..')
+    // check if we should watch a parent dir instead by checking if ../ or ../../ is an ancestor
+    // to the file arg
+    const filename = path.resolve(fs.realpathSync(arg))
+    const changeTo = check(dir, filename, '.') || check(dir, filename, '..') || check(dir, filename, '../..')
 
-  if (changeTo) {
-    dir = changeTo
-    break
+    if (changeTo) {
+      dir = changeTo
+      break
+    }
   }
 }
 
 run()
-fs.watch(dir, { recursive: true }, function () {
+fs.watch(watch || dir, { recursive: true }, function () {
   changed++
   run()
 })
@@ -39,8 +54,8 @@ function run () {
   runs++
   const prefix = '[macmon #' + runs.toString().padStart(4, '0') + ']'
   const change = changed
-  console.error(prefix, 'spawning ' + process.argv.slice(2).join(' '))
-  proc = spawn(process.argv[2], process.argv.slice(3), {
+  console.error(prefix, 'spawning ' + process.argv.slice(start).join(' '))
+  proc = spawn(process.argv[start], process.argv.slice(start + 1), {
     stdio: 'inherit'
   })
   proc.on('exit', (code) => {
