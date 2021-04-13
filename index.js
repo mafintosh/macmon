@@ -14,11 +14,15 @@ let start = 2
 for (start; start < process.argv.length; start++) {
   const a = process.argv[start]
   if (a[0] !== '-') break
+
   if (a.startsWith('--watch=')) {
-    watch = a.split('--watch=')[1]
+    if (!watch) watch = []
+    watch.push(a.split('--watch=')[1])
   }
+
   if (a.startsWith('-w=')) {
-    watch = a.split('-w=')[1]
+    if (!watch) watch = []
+    watch.push(a.split('-w=')[1])
   }
 }
 
@@ -44,10 +48,13 @@ if (!watch) {
 }
 
 run()
-fs.watch(watch || dir, { recursive: true }, function () {
+if (!watch) watch = [dir]
+for (const w of watch) fs.watch(w, { recursive: true }, onchange)
+
+function onchange () {
   changed++
   run()
-})
+}
 
 function run () {
   if (proc) return proc.kill('SIGINT')
