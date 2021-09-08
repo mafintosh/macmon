@@ -15,19 +15,20 @@ for (start; start < process.argv.length; start++) {
   const a = process.argv[start]
   if (a[0] !== '-') break
 
-  if (a.startsWith('--watch=')) {
-    if (!watch) watch = []
-    watch.push(a.split('--watch=')[1])
-  }
+  const w = arg('--watch') || arg('-w')
+  if (!w) continue
+  if (!watch) watch = []
+  watch.push(w)
 
-  if (a.startsWith('-w=')) {
-    if (!watch) watch = []
-    watch.push(a.split('-w=')[1])
+  function arg (name) {
+    if (a === name) return process.argv[++start]
+    if (a.startsWith(name + '=')) return a.slice(name.length + 1)
+    return null
   }
 }
 
 if (!process.argv[start]) {
-  console.error('Usage: macmon <command> ...args')
+  console.error('Usage: macmon [-w=./] <command> ...args')
   process.exit(1)
 }
 
