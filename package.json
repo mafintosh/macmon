@@ -1,6 +1,6 @@
 {
   "name": "macmon",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "description": "Simple, no deps, \"run on dir change\" tool for Mac",
   "bin": {
     "macmon": "./index.js"
