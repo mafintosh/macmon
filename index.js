@@ -10,10 +10,16 @@ let runs = 0
 let dir = process.cwd()
 let watch = null
 let start = 2
+let clear = false
 
 for (start; start < process.argv.length; start++) {
   const a = process.argv[start]
   if (a[0] !== '-') break
+
+  if (a === '--clear' || a === '-c') {
+    clear = true
+    continue
+  }
 
   const w = arg('--watch') || arg('-w')
   if (!w) continue
@@ -62,6 +68,7 @@ function run () {
   runs++
   const prefix = '[macmon #' + runs.toString().padStart(4, '0') + ']'
   const change = changed
+  if (clear) clearScreen()
   console.error(prefix, 'spawning ' + process.argv.slice(start).join(' '))
   proc = spawn(process.argv[start], process.argv.slice(start + 1), {
     stdio: 'inherit'
@@ -77,4 +84,9 @@ function check (dir, file, change) {
   const changed = path.join(dir, change)
   const rel = path.relative(changed, file)
   return rel.includes('../') ? false : changed
+}
+
+function clearScreen () {
+  process.stdout.moveCursor(-1000, -1000)
+  process.stdout.clearScreenDown()
 }
