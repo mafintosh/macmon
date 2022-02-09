@@ -21,8 +21,14 @@ for (start; start < process.argv.length; start++) {
     continue
   }
 
-  const w = arg('--watch') || arg('-w')
-  if (!w) continue
+  let w = arg('--watch') || arg('-w')
+
+  if (!w) {
+    w = arg('-cw')
+    if (w) clear = true
+    else continue
+  }
+
   if (!watch) watch = []
   watch.push(w)
 
@@ -34,7 +40,7 @@ for (start; start < process.argv.length; start++) {
 }
 
 if (!process.argv[start]) {
-  console.error('Usage: macmon [-w=./] <command> ...args')
+  console.error('Usage: macmon [-c -w=./] <command> ...args')
   process.exit(1)
 }
 
